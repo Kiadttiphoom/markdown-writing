@@ -43,23 +43,23 @@ def report(status, check, note=""):
 def parse_frontmatter(text):
     m = re.match(r"^---\r?\n(.*?)\r?\n---\r?\n", text, re.S)
     if not m:
-        return None, None
+        return None, None, None
     raw = m.group(1)
     try:
         import yaml  # optional dependency
         data = yaml.safe_load(raw)
-        return data, raw
+        return data, raw, "PyYAML"
     except ImportError:
         pass
     except Exception as exc:  # malformed YAML
-        return exc, raw
+        return exc, raw, "PyYAML"
     # Minimal fallback parser: top-level "key: value" lines only.
     data = {}
     for line in raw.splitlines():
         if re.match(r"^[A-Za-z0-9_-]+\s*:", line):
             key, _, value = line.partition(":")
             data[key.strip()] = value.strip().strip("'\"")
-    return data, raw
+    return data, raw, "simplified"
 
 
 def check_headings(lines):
@@ -120,7 +120,7 @@ def main(argv):
     text = skill_md.read_text(encoding="utf-8")
     lines = text.splitlines()
 
-    fm, _raw = parse_frontmatter(text)
+    fm, _raw, parser = parse_frontmatter(text)
     if fm is None:
         report("FAIL", "Frontmatter", "not found or not closed with ---")
         fm = {}
@@ -131,7 +131,8 @@ def main(argv):
         report("FAIL", "Frontmatter", "not a key/value mapping")
         fm = {}
     else:
-        report("PASS", "Frontmatter", "parsed")
+        report("PASS" if parser == "PyYAML" else "WARN", "Frontmatter",
+               "parsed with PyYAML" if parser == "PyYAML" else "simplified check only; full YAML validation not performed")
 
     name = fm.get("name")
     if not name:

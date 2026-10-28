@@ -28,7 +28,7 @@ A good skill is a document that controls agent behavior. It is not a document th
 
 ## Prerequisites
 
-Before starting, obtain or ask for these four items:
+Inspect available context for these items first. Ask only when missing information materially affects correctness; otherwise proceed and record assumptions:
 
 1. What the skill does and which problem it solves.
 2. The target platform (Claude Code, Codex, other).
@@ -215,12 +215,14 @@ Rules for using the result:
 - **MUST** fix every `FAIL` and re-run, or report why it could not be fixed.
 - **MUST** review each `WARN` and either fix it or note why it is acceptable.
 - **MUST NOT** treat a clean script run as proof that triggers, rule clarity, or rule consistency are correct. Those checks remain manual.
-- The script works without PyYAML by using a simplified parser. When PyYAML is installed, it performs full YAML parsing. If PyYAML is missing, state that YAML was only checked at the simplified level.
+- The script reports a WARN when PyYAML is unavailable and only a simplified parser was used. A simplified check is not full YAML validation; run a real YAML parser if available, otherwise mark full YAML validation NOT RUN and explain why.
 - If the official `skills-ref validate` tool is available, running it is optional extra evidence. Report it as `NOT RUN` when unavailable.
 
 ## Expected Output Structure
 
-When creating or modifying a skill, deliver in this order:
+For small changes, a concise report of changes, checks actually performed, assumptions, and limitations is sufficient; use the full table below when useful or explicitly requested. Never claim an unrun check passed.
+
+For a full report, deliver in this order:
 
 1. **Skill File:** Save SKILL.md at the location the user specifies. If none is specified, inspect the project structure first. When editing an existing file, change only the necessary parts and do not rewrite the whole file without need.
 2. **Validation Report:** A table in the format below.
@@ -290,7 +292,7 @@ Expected behavior:
 | Duplicate rules | Merge them without losing substance |
 | Examples read as rules | Move the rule to the Rules section and let the example refer to it |
 | No shell or no web search | Mark affected checks `NOT RUN` and give the reason |
-| Target file already exists | Read and compare first; do not overwrite without permission |
+| Target file already exists | Read and compare first. An explicit request to edit authorizes the requested changes; ask only if scope or authorization is unclear |
 
 ## Validation Checklist
 

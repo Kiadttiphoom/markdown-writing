@@ -18,7 +18,9 @@ skill-authoring/
 ├── SKILL.md                      Required. Instructions the agent follows
 ├── README.md                     This file (for humans)
 ├── scripts/
-│   └── validate_skill.py         Structural validator (Python 3, standard library only)
+│   └── validate_skill.py         Structural validator (PyYAML optional)
+├── tests/
+│   └── test_validate_skill.py    Validator regression tests
 ├── references/
 │   └── platform-notes.md         Platform requirements with sources and verification status
 └── assets/
