@@ -1,132 +1,89 @@
-# skill-authoring
+# Skill Authoring
 
-An Agent Skill that helps an AI coding agent create, review, and improve `SKILL.md` files.
-
-This README is for humans. Agents do not need it, and it can be deleted without affecting the skill. If your platform or validator objects to extra top-level files, remove it.
+Create, review, and improve `SKILL.md` files for AI coding agents. Skill Authoring helps turn a task into clear activation conditions, actionable instructions, and checks that distinguish verified results from assumptions.
 
 ## What it does
 
-- Creates new `SKILL.md` files from your requirements.
-- Reviews existing skills for malformed YAML, vague triggers, conflicting rules, and missing scope.
-- Splits oversized skills into `references/` files.
-- Produces a Validation Report that uses only `PASS`, `FAIL`, `NOT RUN`, and `NOT APPLICABLE`.
+- Creates skills from a stated task and target platform.
+- Reviews an existing skill for unclear triggers, conflicting rules, scope gaps, and malformed frontmatter.
+- Refactors long skills into a focused `SKILL.md` with supporting references.
+- Reports checks performed, limitations, and significant assumptions.
 
-## Folder structure
+It is intended for **authoring skills**. It does not execute the task described by a skill or replace general documentation tools. Activation depends on the agent and its skill-discovery settings.
 
-```text
-skill-authoring/
-├── SKILL.md                      Required. Instructions the agent follows
-├── README.md                     This file (for humans)
-├── scripts/
-│   └── validate_skill.py         Structural validator (PyYAML optional)
-├── tests/
-│   └── test_validate_skill.py    Validator regression tests
-├── references/
-│   └── platform-notes.md         Platform requirements with sources and verification status
-└── assets/
-    └── skill-template.md         Starter template for new skills
-```
+## Getting started
 
-## Installation
+Install the complete folder in a skills directory supported by your agent. Keep the folder name `skill-authoring`, matching the `name` in `SKILL.md`. Installation paths vary by platform; check its documentation before installing.
 
-### Option 1: Install with npx
-
-Requires Node.js. The `skills` CLI is a third-party tool, not part of any agent. It downloads files from GitHub into your machine, so review the repository before installing.
+For example, the third-party `skills` CLI can install from the repository below. Review the source and CLI options before running a command that downloads files:
 
 ```bash
 npx skills add Kiadttiphoom/skill-authoring
 ```
 
-Common options:
+Alternatively, copy the repository folder into your agent's skill directory. Restart the agent or start a new session if your platform requires it to discover newly installed skills. CLI installation and agent-specific compatibility have not been verified by this README.
 
-| Goal | Command |
-|---|---|
-| List skills in the repository without installing | `npx skills add Kiadttiphoom/skill-authoring --list` |
-| Install a specific skill by name | `npx skills add Kiadttiphoom/skill-authoring --skill skill-authoring` |
-| Install globally (all projects) | `npx skills add Kiadttiphoom/skill-authoring -g` |
-| Target a specific agent | `npx skills add Kiadttiphoom/skill-authoring -a claude-code` |
-| Skip confirmation prompts | add `-y` |
-| Show installed skills | `npx skills list` |
-
-You can also pass the full URL instead of the short form:
-
-```bash
-npx skills add https://github.com/Kiadttiphoom/skill-authoring
-```
-
-Option names come from the CLI's published documentation and may change. Run `npx skills --help` to confirm them.
-
-If the CLI reports "No skills found", it may not detect a `SKILL.md` located at the repository root. In that case, move the skill into `skills/skill-authoring/` in the repository and push again.
-
-After installing, open your agent in a new session and ask it to use `skill-authoring`.
-
-### Option 2: Install manually
-
-Place the whole `skill-authoring` folder where your agent loads skills. The folder name must match the `name` field in `SKILL.md`.
-
-Example location on Windows:
+Ask your agent to use `skill-authoring`, for example:
 
 ```text
-C:\Users\<user>\.agents\skills\skill-authoring\
-```
-
-The correct location depends on your platform. Confirm it in the official documentation of the agent you use. This README does not verify any platform's skill path.
-
-### Safety note
-
-This skill includes one script, `scripts/validate_skill.py`. It only reads the SKILL.md file you point it at and prints results. It does not modify files or make network requests. Read it before running it, as you should with any script you install.
-
-## Usage
-
-Ask your agent in plain language. Examples:
-
-```text
-Create a skill for reviewing Markdown documentation.
+Use skill-authoring to create a skill for reviewing API contracts.
 ```
 
 ```text
-Review this SKILL.md for malformed YAML, unclear instructions, conflicting rules, and missing trigger conditions.
+Use skill-authoring to review this SKILL.md for ambiguous triggers and conflicting rules.
 ```
 
-Whether the agent activates the skill depends on the platform's selection mechanism. If it does not activate, mention the skill by name in your request.
+The agent should inspect the available context first and ask only for missing information that materially affects correctness. For an existing file, an explicit request to edit it authorizes the requested changes; the agent should inspect it and preserve relevant instructions.
 
-## Validating a skill
+## Validate a skill
 
-Run the validator on any skill folder:
+Run from the `skill-authoring` directory with Python 3:
 
 ```bash
 python3 scripts/validate_skill.py path/to/skill-folder
 ```
 
-On Windows, use `python` or `py` if `python3` is not available:
+On Windows, if the Python launcher is installed:
 
-```bat
+```powershell
 py scripts\validate_skill.py path\to\skill-folder
 ```
 
+You can pass a folder containing `SKILL.md` or a path to the file itself. The script reads files and reports findings; it does not modify the skill or access the network.
+
 | Result | Meaning |
-|---|---|
-| `PASS` | The check passed |
-| `WARN` | Review it; may be acceptable |
-| `FAIL` | Must be fixed; the script exits with code 1 |
+| --- | --- |
+| `PASS` | The particular check passed. |
+| `WARN` | Review the limitation or potential issue. Warnings do not cause exit code 1. |
+| `FAIL` | A check failed. The script exits with code 1. |
 
-The script checks structure only: frontmatter, `name`, folder match, `description` length, unknown fields, line count, heading hierarchy, code fences, referenced files, and secret-like patterns. It does not judge trigger quality, instruction clarity, or rule conflicts. PyYAML is optional; without it the script uses a simplified frontmatter parser.
+Exit code `0` means there were no failures, even if warnings remain; `2` indicates a usage error or missing file. The validator checks structure, references and some secret-like patterns. It cannot establish that a skill triggers correctly, its instructions are clear, or all platform requirements are met.
 
-## Verification status
+**YAML validation:** PyYAML is optional. With PyYAML, the script parses YAML; without it, the script emits a warning and performs only a simplified frontmatter check. A simplified check is not full YAML validation. Install PyYAML in an appropriate Python environment if full parsing is needed.
 
-| Item | Status |
-|---|---|
-| `SKILL.md` frontmatter and validator run on this skill | PASS (validator run on 2026-10-28) |
-| Validator tested against a deliberately broken sample | PASS (reported the expected failures) |
-| Installation with `npx skills add` | NOT RUN |
-| Trigger behavior with a real agent | NOT RUN |
-| Compatibility with Claude Code | NOT RUN |
-| Compatibility with Codex | NOT RUN |
-| Agent Skills open format rules | Partially verified from search excerpts; see `references/platform-notes.md` |
+## Run validator tests
 
-## Updating
+```bash
+python3 -m unittest discover -s tests -v
+```
 
-1. Edit `SKILL.md` or the bundled files.
-2. Run the validator and resolve every `FAIL`.
-3. If you add a bundled file, reference it from `SKILL.md` and say when the agent should read or run it. Files the agent is never told about will not be used.
-4. If you change the platform rules you rely on, update `references/platform-notes.md` with the source URL and date.
+The suite exercises valid input, a folder-name mismatch, missing frontmatter and references, an unclosed code fence, and the simplified-parser warning. The malformed-YAML test requires PyYAML and is skipped when it is unavailable. Review the test output before reporting a check as passed.
+
+## Files
+
+```text
+skill-authoring/
+├── SKILL.md                         Agent instructions
+├── README.md                        This guide
+├── assets/skill-template.md         Starter template
+├── references/platform-notes.md     Sources and verification status
+├── scripts/validate_skill.py        Read-only structural validator
+└── tests/test_validate_skill.py     Validator regression tests
+```
+
+## Maintaining the skill
+
+1. Inspect the existing instructions and change only what the task requires.
+2. Run the validator and regression tests; resolve failures and explain any warnings or skipped tests.
+3. Review triggers, scope, examples, and conflicting rules manually. A clean validator run does not prove these are correct.
+4. When platform requirements change, verify the official source and update `references/platform-notes.md` with the source and date. Report anything that remains unverified.
