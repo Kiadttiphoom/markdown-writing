@@ -65,12 +65,13 @@ Before starting, obtain or ask for these four items:
 2. If a web search tool is available, check the official documentation before asserting that any rule is mandatory.
 3. If verification is not possible, state "not verified against official documentation" in the report.
 
-Requirements commonly seen in Agent Skills (confirm against the target platform every time; do not treat them as universal facts):
+Requirements of the Agent Skills open format (agentskills.io) as last retrieved. Other platforms may differ. Read `references/platform-notes.md` for sources, dates, and verification status, and confirm against the target platform every time:
 
-| Item | Commonly seen requirement |
+| Item | Requirement |
 |---|---|
-| `name` | Lowercase letters, digits, and hyphens; no spaces or dots; matches the folder name |
-| `description` | Required; has a length cap (often around 1024 characters) |
+| `name` | 1 to 64 characters; lowercase letters, digits, single hyphens; no leading or trailing hyphen; matches the folder name |
+| `description` | Required; 1 to 1024 characters |
+| Optional fields | `license`, `compatibility`, `metadata`, `allowed-tools` (support varies) |
 | File name | `SKILL.md` in the casing the platform requires |
 
 ### Step 2: Gather information
@@ -94,7 +95,7 @@ Requirements commonly seen in Agent Skills (confirm against the target platform 
 
 ### Step 5: Validate
 
-1. Run the frontmatter checks (see Validation Commands).
+1. Run `scripts/validate_skill.py` on the skill (see Validation Commands).
 2. Check heading hierarchy, closed code fences, and conflicting rules.
 3. Test triggers with at least 3 prompts that should activate the skill and 2 that should not. State clearly whether the test was run against a real agent or reasoned through manually.
 4. Fix issues and re-validate until no fixable `FAIL` remains.
@@ -102,6 +103,16 @@ Requirements commonly seen in Agent Skills (confirm against the target platform 
 ### Step 6: Deliver
 
 Deliver according to Expected Output Structure.
+
+## Bundled Resources
+
+| File | Read or run it when |
+|---|---|
+| `scripts/validate_skill.py` | Step 5 of the workflow, and after every edit to a SKILL.md. Run it; do not read it unless it fails unexpectedly |
+| `references/platform-notes.md` | Step 1, when asserting what a platform requires or supports |
+| `assets/skill-template.md` | Step 4, when starting a new skill. Copy it and fill in each placeholder |
+
+If a bundled file is missing, state which one and continue using the rules in this file.
 
 ## Structure Selection
 
@@ -194,28 +205,18 @@ When a conflict is found:
 Use these when a shell is available. If not, set the related items to `NOT RUN` with a reason.
 
 ```bash
-# 1) Extract and validate YAML frontmatter
-python3 - << 'PY'
-import re, yaml
-text = open("SKILL.md", encoding="utf-8").read()
-m = re.match(r"^---\n(.*?)\n---\n", text, re.S)
-assert m, "Frontmatter not found or not closed with ---"
-fm = yaml.safe_load(m.group(1))
-assert isinstance(fm, dict), "Frontmatter is not a mapping"
-for k in ("name", "description"):
-    assert fm.get(k), f"Missing field: {k}"
-assert re.fullmatch(r"[a-z0-9]+(-[a-z0-9]+)*", fm["name"]), "Invalid name format"
-print("name:", fm["name"], "| description length:", len(fm["description"]))
-PY
-
-# 2) Count lines
-wc -l SKILL.md
-
-# 3) Check fences are balanced (the count of fence lines must be even)
-grep -c '^\s*```' SKILL.md
+python3 scripts/validate_skill.py path/to/skill-folder
 ```
 
-If PyYAML is missing, install it when the environment allows; otherwise report `NOT RUN`.
+The script reports `PASS`, `FAIL`, or `WARN` for: frontmatter, `name`, folder match, `description`, unknown fields, line count, heading hierarchy, code fences, referenced files, and secret patterns. It exits with code 1 when any `FAIL` exists.
+
+Rules for using the result:
+
+- **MUST** fix every `FAIL` and re-run, or report why it could not be fixed.
+- **MUST** review each `WARN` and either fix it or note why it is acceptable.
+- **MUST NOT** treat a clean script run as proof that triggers, rule clarity, or rule consistency are correct. Those checks remain manual.
+- The script works without PyYAML by using a simplified parser. When PyYAML is installed, it performs full YAML parsing. If PyYAML is missing, state that YAML was only checked at the simplified level.
+- If the official `skills-ref validate` tool is available, running it is optional extra evidence. Report it as `NOT RUN` when unavailable.
 
 ## Expected Output Structure
 
