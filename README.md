@@ -27,6 +27,39 @@ skill-authoring/
 
 ## Installation
 
+### Option 1: Install with npx
+
+Requires Node.js. The `skills` CLI is a third-party tool, not part of any agent. It downloads files from GitHub into your machine, so review the repository before installing.
+
+```bash
+npx skills add Kiadttiphoom/skill-authoring
+```
+
+Common options:
+
+| Goal | Command |
+|---|---|
+| List skills in the repository without installing | `npx skills add Kiadttiphoom/skill-authoring --list` |
+| Install a specific skill by name | `npx skills add Kiadttiphoom/skill-authoring --skill skill-authoring` |
+| Install globally (all projects) | `npx skills add Kiadttiphoom/skill-authoring -g` |
+| Target a specific agent | `npx skills add Kiadttiphoom/skill-authoring -a claude-code` |
+| Skip confirmation prompts | add `-y` |
+| Show installed skills | `npx skills list` |
+
+You can also pass the full URL instead of the short form:
+
+```bash
+npx skills add https://github.com/Kiadttiphoom/skill-authoring
+```
+
+Option names come from the CLI's published documentation and may change. Run `npx skills --help` to confirm them.
+
+If the CLI reports "No skills found", it may not detect a `SKILL.md` located at the repository root. In that case, move the skill into `skills/skill-authoring/` in the repository and push again.
+
+After installing, open your agent in a new session and ask it to use `skill-authoring`.
+
+### Option 2: Install manually
+
 Place the whole `skill-authoring` folder where your agent loads skills. The folder name must match the `name` field in `SKILL.md`.
 
 Example location on Windows:
@@ -36,6 +69,10 @@ C:\Users\<user>\.agents\skills\skill-authoring\
 ```
 
 The correct location depends on your platform. Confirm it in the official documentation of the agent you use. This README does not verify any platform's skill path.
+
+### Safety note
+
+This skill includes one script, `scripts/validate_skill.py`. It only reads the SKILL.md file you point it at and prints results. It does not modify files or make network requests. Read it before running it, as you should with any script you install.
 
 ## Usage
 
@@ -79,6 +116,7 @@ The script checks structure only: frontmatter, `name`, folder match, `descriptio
 |---|---|
 | `SKILL.md` frontmatter and validator run on this skill | PASS (validator run on 2026-10-28) |
 | Validator tested against a deliberately broken sample | PASS (reported the expected failures) |
+| Installation with `npx skills add` | NOT RUN |
 | Trigger behavior with a real agent | NOT RUN |
 | Compatibility with Claude Code | NOT RUN |
 | Compatibility with Codex | NOT RUN |
