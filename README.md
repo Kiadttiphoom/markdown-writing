@@ -79,7 +79,7 @@ This skill includes one script, `scripts/validate_skill.py`. It only reads the S
 Ask your agent in plain language. Examples:
 
 ```text
-Create a skill for reviewing Go backend code that communicates with MQTT.
+Create a skill for reviewing Markdown documentation.
 ```
 
 ```text

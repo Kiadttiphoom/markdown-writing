@@ -162,7 +162,7 @@ Comparison:
 
 | Weak | Strong |
 |---|---|
-| `Helps with Go code.` | `Review Go backend code that uses MQTT (topics, QoS, reconnect, duplicate messages, auth). Use when the user asks to review or audit MQTT handling in Go. Do not use for non-Go code or generic Go style review.` |
+| `Helps with documentation.` | `Review Markdown documentation for broken links and unclear instructions. Use when the user asks to audit project documentation. Do not use for source code review.` |
 
 ## Instruction Design
 
@@ -171,7 +171,7 @@ Any instruction that affects correctness or safety must include the elements it 
 Good example:
 
 ```markdown
-- When editing Go files, run the relevant tests if the environment supports it.
+- When editing source files, run the relevant tests if the environment supports it.
 - If tests fail, investigate the cause and report the result.
 - Do not report tests as passing unless they were actually run.
 - If tests cannot be run, state the limitation explicitly.
@@ -252,13 +252,13 @@ The table above is a format sample only. Every status must come from a check tha
 
 ### Example A: Create a new skill
 
-Input: `Create a skill for reviewing Go backend code that communicates with MQTT.`
+Input: `Create a skill for reviewing Markdown documentation.`
 
 Expected behavior:
 
-- Scope triggers to Go + MQTT review and define coverage (topics, QoS, reconnect, duplicates, auth).
+- Scope triggers to documentation review and define coverage such as broken links and unclear instructions.
 - State out-of-scope items and the review report format.
-- Do not assume an MQTT library, broker, or repository layout. If unknown, ask or record an assumption.
+- Do not assume a documentation framework or repository layout. If unknown, ask or record an assumption.
 
 ### Example B: Review an existing skill
 
