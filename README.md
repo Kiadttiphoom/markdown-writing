@@ -2,6 +2,17 @@
 
 This skill helps an AI agent write and improve Markdown documents such as project plans, specifications, guides, reports, and README files. It focuses on clear structure, accurate content, and formatting that is easy to read.
 
+## Installation
+
+With Node.js and the `skills` CLI, install from this repository:
+
+```bash
+npx skills add Kiadttiphoom/skill-authoring --skill markdown-writing
+```
+
+The repository name above is the currently configured Git remote. The remote must contain the `markdown-writing` skill for this command to install it; local commits must be pushed first. Review the repository before installing. To select an agent or install globally, consult `npx skills add --help`.
+
+Alternatively, copy the skill directory to the skills location supported by your agent. Restart the agent or start a new session if needed for skill discovery. The installation command has not been tested here.
 ## Use
 
 Ask your agent to use `markdown-writing` and identify the document or task. For example:
