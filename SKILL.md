@@ -1,5 +1,5 @@
 ---
-name: skill-authoring
+name: markdown-writing
 description: Write, edit, and improve Markdown documents including README files, project plans, specifications, guides, and reports. Use when the user wants an .md document to be clear, accurate, well organized, and pleasant to read. Do not use solely to create or validate agent SKILL.md files.
 ---
 

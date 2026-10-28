@@ -1,17 +1,17 @@
-# Skill Authoring: Markdown Documents
+# Markdown Writing
 
 This skill helps an AI agent write and improve Markdown documents such as project plans, specifications, guides, reports, and README files. It focuses on clear structure, accurate content, and formatting that is easy to read.
 
 ## Use
 
-Ask your agent to use `skill-authoring` and identify the document or task. For example:
+Ask your agent to use `markdown-writing` and identify the document or task. For example:
 
 ```text
-Use skill-authoring to improve the structure and readability of this project plan.
+Use markdown-writing to improve the structure and readability of this project plan.
 ```
 
 ```text
-Use skill-authoring to write a Thai Markdown guide from these requirements.
+Use markdown-writing to write a Thai Markdown guide from these requirements.
 ```
 
 The agent should preserve the user's requirements, verify relevant sources where practical, and distinguish current implementation from proposals and unknowns. Its `SKILL.md` contains the workflow.
